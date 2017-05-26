@@ -29,5 +29,6 @@ dependencies {
 
     //library do google
     compile 'com.google.android.gms:play-services-vision:9.0.0+'
+    compile 'com.theartofdev.edmodo:android-image-cropper:2.4.+'
 }
 

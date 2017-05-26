@@ -26,6 +26,8 @@ import android.widget.TextView;
 import com.google.android.gms.vision.Frame;
 import com.google.android.gms.vision.text.TextBlock;
 import com.google.android.gms.vision.text.TextRecognizer;
+import com.theartofdev.edmodo.cropper.CropImage;
+import com.theartofdev.edmodo.cropper.CropImageView;
 
 import java.io.File;
 import java.io.IOException;
@@ -107,6 +109,11 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    public void tirarFoto(View view){
+        Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
+        startActivityForResult(intent, 29);
+    }
+
     private static File getOutputMediaFile(){
         File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
                 Environment.DIRECTORY_PICTURES), "CameraDemo");
@@ -133,16 +140,20 @@ public class MainActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
                 try {
-                    ExifInterface exif = new ExifInterface(file.getPath());
+                    /*ExifInterface exif = new ExifInterface(file.getPath());
                     int rotation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
                     int rotationInDegrees = exifToDegrees(rotation);
                     Matrix matrix = new Matrix();
                     if (rotation != 0f) {matrix.preRotate(rotationInDegrees);}
-                    adjustedBitmap = Bitmap.createBitmap(bitmop, 0, 0, bitmop.getWidth(), bitmop.getHeight(), matrix, true);
-                    imageView.setImageBitmap(adjustedBitmap);
+                    adjustedBitmap = Bitmap.createBitmap(bitmop, 0, 0, bitmop.getWidth(), bitmop.getHeight(), matrix, true);*/
+                    //imageView.setImageBitmap(adjustedBitmap);
+                    CropImage.activity(file)
+                            .setGuidelines(CropImageView.Guidelines.OFF)
+                            .start(this);
 
 
-                } catch (IOException e) {
+
+                } catch (/*IO*/Exception e) {
                     e.printStackTrace();
                 }
 
@@ -150,6 +161,29 @@ public class MainActivity extends AppCompatActivity {
 
 
                 //imageView.setImageURI(file);
+            }
+        }
+        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+            if (resultCode == RESULT_OK) {
+                Uri resultUri = result.getUri();
+                try {
+                    adjustedBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), resultUri);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                imageView.setImageBitmap(adjustedBitmap);
+            } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
+                Exception error = result.getError();
+            }
+        }
+        if (requestCode == 29){
+            if(data != null){
+                Bundle bundle = data.getExtras();
+                if(bundle != null){
+                    adjustedBitmap = (Bitmap) bundle.get("data");
+                    imageView.setImageBitmap(adjustedBitmap);
+                }
             }
         }
     }
