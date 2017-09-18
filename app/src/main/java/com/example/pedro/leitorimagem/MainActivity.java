@@ -67,11 +67,6 @@ public class MainActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
         }
 
-        final Bitmap bitmap = BitmapFactory.decodeResource(
-                getApplicationContext().getResources(),
-                R.drawable.test_image
-        );
-        //imageView.setImageBitmap(bitmap);
 
         btnProcess.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -176,19 +171,6 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        if (requestCode == 367 && resultCode == Activity.RESULT_OK) {
-            if (data == null) {
-                //Display an error
-                return;
-            }
-            try {
-                InputStream inputStream = getApplicationContext().getContentResolver().openInputStream(data.getData());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            //Now you can do whatever you want with your inpustream, save it as file, upload to a server, decode a bitmap...
-        }
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
             if (resultCode == RESULT_OK) {
