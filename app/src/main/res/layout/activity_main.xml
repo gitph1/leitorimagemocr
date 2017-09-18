@@ -21,6 +21,7 @@
             android:layout_weight="9"
             android:layout_width="match_parent"
             android:layout_height="fill_parent"
+            android:adjustViewBounds="true"
             />
         <Button
             android:id="@+id/button_image"
@@ -31,6 +32,16 @@
             android:textColor="@android:color/white"
             android:onClick="takePicture"
             android:text="Take a picture!"/>
+        <Button
+            android:id="@+id/button_gallery"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:background="@android:color/holo_red_dark"
+            android:textColor="@android:color/white"
+            android:layout_marginTop="10dp"
+            android:onClick="pickGallery"
+            android:text="Pick from gallery"/>
 
         <Button
             android:id="@+id/button_process"
@@ -40,7 +51,7 @@
             android:background="@android:color/holo_red_dark"
             android:textColor="@android:color/white"
             android:layout_marginTop="10dp"
-            android:text="PROCESSAR" />
+            android:text="Detect text" />
 
 
         <EditText

@@ -2,6 +2,7 @@ package com.example.pedro.leitorimagem;
 
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -30,7 +31,10 @@ import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -109,9 +113,10 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void tirarFoto(View view){
-        Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
-        startActivityForResult(intent, 29);
+    public void pickGallery(View view){
+        Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
+        photoPickerIntent.setType("image/*");
+        startActivityForResult(photoPickerIntent, 377);
     }
 
     private static File getOutputMediaFile(){
@@ -140,13 +145,7 @@ public class MainActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
                 try {
-                    /*ExifInterface exif = new ExifInterface(file.getPath());
-                    int rotation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
-                    int rotationInDegrees = exifToDegrees(rotation);
-                    Matrix matrix = new Matrix();
-                    if (rotation != 0f) {matrix.preRotate(rotationInDegrees);}
-                    adjustedBitmap = Bitmap.createBitmap(bitmop, 0, 0, bitmop.getWidth(), bitmop.getHeight(), matrix, true);*/
-                    //imageView.setImageBitmap(adjustedBitmap);
+
                     CropImage.activity(file)
                             .setGuidelines(CropImageView.Guidelines.OFF)
                             .start(this);
@@ -158,10 +157,36 @@ public class MainActivity extends AppCompatActivity {
                 }
 
 
-
-
-                //imageView.setImageURI(file);
             }
+        }
+        if (requestCode == 377) {
+            if (resultCode == RESULT_OK) {
+                try {
+                    final Uri imageUri = data.getData();
+                    CropImage.activity(imageUri)
+                            .setGuidelines(CropImageView.Guidelines.OFF)
+                            .start(this);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+            } else {
+                //não pegou img
+            }
+        }
+
+        if (requestCode == 367 && resultCode == Activity.RESULT_OK) {
+            if (data == null) {
+                //Display an error
+                return;
+            }
+            try{
+                InputStream inputStream = getApplicationContext().getContentResolver().openInputStream(data.getData());
+            }catch(IOException e){
+                e.printStackTrace();
+            }
+
+            //Now you can do whatever you want with your inpustream, save it as file, upload to a server, decode a bitmap...
         }
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
@@ -193,10 +218,5 @@ public class MainActivity extends AppCompatActivity {
         else if (exifOrientation == ExifInterface.ORIENTATION_ROTATE_270) {  return 270; }
         return 0;
     }
-    /*public static Bitmap rotateImage(Bitmap source, float angle) {
-        Matrix matrix = new Matrix();
-        matrix.postRotate(angle);
-        return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(),
-                matrix, true);
-    }*/
+
 }
