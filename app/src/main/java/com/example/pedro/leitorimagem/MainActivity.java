@@ -58,13 +58,13 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         takePictureButton = (Button) findViewById(R.id.button_image);
-        imageView = (ImageView)findViewById(R.id.image_view);
-        btnProcess = (Button)findViewById(R.id.button_process);
-        txtResult = (EditText)findViewById(R.id.textview_result);
+        imageView = (ImageView) findViewById(R.id.image_view);
+        btnProcess = (Button) findViewById(R.id.button_process);
+        txtResult = (EditText) findViewById(R.id.textview_result);
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             takePictureButton.setEnabled(false);
-            ActivityCompat.requestPermissions(this, new String[] { Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE }, 0);
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
         }
 
         final Bitmap bitmap = BitmapFactory.decodeResource(
@@ -77,14 +77,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 TextRecognizer textRecognizer = new TextRecognizer.Builder(getApplicationContext()).build();
-                if(!textRecognizer.isOperational()){
+                if (!textRecognizer.isOperational()) {
                     Log.w("Error", "Detector dependencies are not yet available");
 
-                }else{
+                } else {
                     Frame frame = new Frame.Builder().setBitmap(adjustedBitmap).build();
                     SparseArray<TextBlock> items = textRecognizer.detect(frame);
                     StringBuilder stringBuilder = new StringBuilder();
-                    for(int i = 0; i < items.size(); i++){
+                    for (int i = 0; i < items.size(); i++) {
                         TextBlock item = items.valueAt(i);
                         stringBuilder.append(item.getValue());
                         stringBuilder.append("\n");
@@ -96,6 +96,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
+
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         if (requestCode == 0) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED
@@ -113,18 +114,18 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void pickGallery(View view){
+    public void pickGallery(View view) {
         Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
         photoPickerIntent.setType("image/*");
         startActivityForResult(photoPickerIntent, 377);
     }
 
-    private static File getOutputMediaFile(){
+    private static File getOutputMediaFile() {
         File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
                 Environment.DIRECTORY_PICTURES), "CameraDemo");
 
-        if (!mediaStorageDir.exists()){
-            if (!mediaStorageDir.mkdirs()){
+        if (!mediaStorageDir.exists()) {
+            if (!mediaStorageDir.mkdirs()) {
                 Log.d("CameraDemo", "failed to create directory");
                 return null;
             }
@@ -132,8 +133,9 @@ public class MainActivity extends AppCompatActivity {
 
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         return new File(mediaStorageDir.getPath() + File.separator +
-                "IMG_"+ timeStamp + ".jpg");
+                "IMG_" + timeStamp + ".jpg");
     }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == 100) {
@@ -149,7 +151,6 @@ public class MainActivity extends AppCompatActivity {
                     CropImage.activity(file)
                             .setGuidelines(CropImageView.Guidelines.OFF)
                             .start(this);
-
 
 
                 } catch (/*IO*/Exception e) {
@@ -180,9 +181,9 @@ public class MainActivity extends AppCompatActivity {
                 //Display an error
                 return;
             }
-            try{
+            try {
                 InputStream inputStream = getApplicationContext().getContentResolver().openInputStream(data.getData());
-            }catch(IOException e){
+            } catch (IOException e) {
                 e.printStackTrace();
             }
 
@@ -202,21 +203,17 @@ public class MainActivity extends AppCompatActivity {
                 Exception error = result.getError();
             }
         }
-        if (requestCode == 29){
-            if(data != null){
+        if (requestCode == 29) {
+            if (data != null) {
                 Bundle bundle = data.getExtras();
-                if(bundle != null){
+                if (bundle != null) {
                     adjustedBitmap = (Bitmap) bundle.get("data");
                     imageView.setImageBitmap(adjustedBitmap);
                 }
             }
         }
     }
-    private static int exifToDegrees(int exifOrientation) {
-        if (exifOrientation == ExifInterface.ORIENTATION_ROTATE_90) { return 90; }
-        else if (exifOrientation == ExifInterface.ORIENTATION_ROTATE_180) {  return 180; }
-        else if (exifOrientation == ExifInterface.ORIENTATION_ROTATE_270) {  return 270; }
-        return 0;
-    }
+
+
 
 }
