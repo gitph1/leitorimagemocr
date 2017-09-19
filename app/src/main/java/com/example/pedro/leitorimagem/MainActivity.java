@@ -23,6 +23,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
 
 import com.google.android.gms.vision.Frame;
 import com.google.android.gms.vision.text.TextBlock;
@@ -44,10 +46,10 @@ import static android.R.attr.width;
 import static com.example.pedro.leitorimagem.R.attr.height;
 
 public class MainActivity extends AppCompatActivity {
+    DatabaseHelper mDatabaseHelper;
     ImageView imageView;
-    Button btnProcess;
+    Button btnProcess, btnAdd, btnView, takePictureButton;
     EditText txtResult;
-    Button takePictureButton;
     Uri file;
     Bitmap bitmop;
     Bitmap adjustedBitmap;
@@ -60,7 +62,10 @@ public class MainActivity extends AppCompatActivity {
         takePictureButton = (Button) findViewById(R.id.button_image);
         imageView = (ImageView) findViewById(R.id.image_view);
         btnProcess = (Button) findViewById(R.id.button_process);
+        btnAdd = (Button) findViewById(R.id.button_add);
+        btnView = (Button) findViewById(R.id.button_view);
         txtResult = (EditText) findViewById(R.id.textview_result);
+        mDatabaseHelper = new DatabaseHelper(this);
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             takePictureButton.setEnabled(false);
@@ -86,7 +91,30 @@ public class MainActivity extends AppCompatActivity {
                     }
                     txtResult.setText(stringBuilder.toString(), TextView.BufferType.EDITABLE);
                     txtResult.setVisibility(View.VISIBLE);
+                    btnAdd.setVisibility(View.VISIBLE);
                 }
+            }
+        });
+
+        btnAdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String newEntry = txtResult.getText().toString();
+                if (txtResult.length() != 0) {
+                    AddData(newEntry);
+                    txtResult.setText("");
+                } else {
+                    toastMessage("DETECTA ALGO CARA");
+                }
+
+            }
+        });
+
+        btnView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, ListDataActivity.class);
+                startActivity(intent);
             }
         });
 
@@ -129,6 +157,24 @@ public class MainActivity extends AppCompatActivity {
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         return new File(mediaStorageDir.getPath() + File.separator +
                 "IMG_" + timeStamp + ".jpg");
+    }
+
+    public void AddData(String newEntry) {
+        boolean insertData = mDatabaseHelper.addData(newEntry);
+
+        if (insertData) {
+            toastMessage("Your text has been saved!");
+        } else {
+            toastMessage("Something went wrong");
+        }
+    }
+
+    /**
+     * customizable toast
+     * @param message
+     */
+    private void toastMessage(String message){
+        Toast.makeText(this,message, Toast.LENGTH_SHORT).show();
     }
 
     @Override

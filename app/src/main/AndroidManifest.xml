@@ -26,7 +26,8 @@
         <meta-data
             android:name="com.google.android.gms.vision.DEPENDENCIES"
             android:value="orc"/>
-
+        <activity android:name=".ListDataActivity"></activity>
+        <activity android:name=".EditDataActivity"></activity>
     </application>
 
 </manifest>
