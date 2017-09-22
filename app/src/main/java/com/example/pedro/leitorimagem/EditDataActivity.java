@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.app.SearchManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -17,7 +18,7 @@ public class EditDataActivity extends AppCompatActivity {
 
     private static final String TAG = "EditDataActivity";
 
-    private Button btnSave,btnDelete;
+    private Button btnSave,btnDelete, btnSearch;
     private EditText editable_item;
 
     DatabaseHelper mDatabaseHelper;
@@ -31,6 +32,7 @@ public class EditDataActivity extends AppCompatActivity {
         setContentView(R.layout.edit_data_layout);
         btnSave = (Button) findViewById(R.id.btnSave);
         btnDelete = (Button) findViewById(R.id.btnDelete);
+        btnSearch = (Button) findViewById(R.id.btnSearch);
         editable_item = (EditText) findViewById(R.id.editable_item);
         mDatabaseHelper = new DatabaseHelper(this);
 
@@ -53,7 +55,25 @@ public class EditDataActivity extends AppCompatActivity {
                 if(!item.equals("")){
                     mDatabaseHelper.updateName(item,selectedID,selectedName);
                 }else{
-                    toastMessage("You must enter a name");
+                    toastMessage("You must enter a text");
+                }
+            }
+        });
+
+        btnSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String item = editable_item.getText().toString();
+                if(!item.equals("")){
+                    try {
+                        Intent intent = new Intent(Intent.ACTION_WEB_SEARCH);
+                        intent.putExtra(SearchManager.QUERY, item);
+                        startActivity(intent);
+                    } catch (Exception e) {
+                        // TODO: handle exception
+                    }
+                }else{
+                    toastMessage("You must enter a text");
                 }
             }
         });

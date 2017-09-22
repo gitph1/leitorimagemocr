@@ -36,6 +36,13 @@ public class ListDataActivity extends AppCompatActivity {
 
         populateListView();
     }
+    @Override
+    public void onResume()
+    {  // After a pause OR at startup
+        super.onResume();
+        //Refresh your stuff here
+        populateListView();
+    }
 
     private void populateListView() {
         Log.d(TAG, "populateListView: Displaying data in the ListView.");
