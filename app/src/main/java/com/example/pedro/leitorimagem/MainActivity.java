@@ -16,14 +16,17 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.util.SparseArray;
+import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.view.MenuItem;
 
 
 import com.google.android.gms.vision.Frame;
@@ -48,18 +51,23 @@ import static com.example.pedro.leitorimagem.R.attr.height;
 public class MainActivity extends AppCompatActivity {
     DatabaseHelper mDatabaseHelper;
     ImageView imageView;
-    Button btnProcess, btnAdd, btnView, takePictureButton;
+    Button btnProcess, btnAdd, btnView, takePictureButton, btnGallery;
     EditText txtResult;
     Uri file;
     Bitmap bitmop;
     Bitmap adjustedBitmap;
-
+    private Toolbar mToolbar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
 
+        setSupportActionBar(mToolbar);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
         takePictureButton = (Button) findViewById(R.id.button_image);
+        btnGallery = (Button) findViewById(R.id.button_gallery);
         imageView = (ImageView) findViewById(R.id.image_view);
         btnProcess = (Button) findViewById(R.id.button_process);
         btnAdd = (Button) findViewById(R.id.button_add);
@@ -89,26 +97,27 @@ public class MainActivity extends AppCompatActivity {
                         stringBuilder.append(item.getValue());
                         stringBuilder.append("\n");
                     }
-                    txtResult.setText(stringBuilder.toString(), TextView.BufferType.EDITABLE);
-                    txtResult.setVisibility(View.VISIBLE);
-                    btnAdd.setVisibility(View.VISIBLE);
+//                    txtResult.setText(stringBuilder.toString(), TextView.BufferType.EDITABLE);
+//                    txtResult.setVisibility(View.VISIBLE);
+//                    btnAdd.setVisibility(View.VISIBLE);
                 }
             }
         });
 
-        btnAdd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String newEntry = txtResult.getText().toString();
-                if (txtResult.length() != 0) {
-                    AddData(newEntry);
-                    txtResult.setText("");
-                } else {
-                    toastMessage("DETECTA ALGO CARA");
-                }
-
-            }
-        });
+//        btnAdd.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                String newEntry = txtResult.getText().toString();
+//                if (txtResult.length() != 0) {
+//                    AddData(newEntry);
+//                    txtResult.setText("");
+//                } else {
+//                    toastMessage("DETECTA ALGO CARA");
+//                }
+//
+//            }
+//        });
+        //todo: apagar esses onclick  e deixar tudo direto
 
         btnView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -119,6 +128,33 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
+        }
+        if (id == R.id.action_camera) {
+            takePicture(takePictureButton);
+        }
+        if (id == R.id.action_gallery) {
+            pickGallery(btnGallery);
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
 
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         if (requestCode == 0) {
@@ -128,13 +164,44 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-
+    //todo: remover View view dos métodos
     public void takePicture(View view) {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         file = Uri.fromFile(getOutputMediaFile());
         intent.putExtra(MediaStore.EXTRA_OUTPUT, file);
         startActivityForResult(intent, 100);
 
+    }
+
+    public void detectText(View view){
+        TextRecognizer textRecognizer = new TextRecognizer.Builder(getApplicationContext()).build();
+        if (!textRecognizer.isOperational()) {
+            Log.w("Error", "Detector dependencies are not yet available");
+
+        } else {
+            Frame frame = new Frame.Builder().setBitmap(adjustedBitmap).build();
+            SparseArray<TextBlock> items = textRecognizer.detect(frame);
+            StringBuilder stringBuilder = new StringBuilder();
+            for (int i = 0; i < items.size(); i++) {
+                TextBlock item = items.valueAt(i);
+                stringBuilder.append(item.getValue());
+                stringBuilder.append("\n");
+            }
+                    txtResult.setText(stringBuilder.toString(), TextView.BufferType.EDITABLE);
+                    saveText(btnAdd);
+//                    txtResult.setVisibility(View.VISIBLE);
+//                    btnAdd.setVisibility(View.VISIBLE);
+        }
+    }
+
+    public void saveText(View view){
+        String newEntry = txtResult.getText().toString();
+        if (txtResult.length() != 0) {
+            AddData(newEntry);
+            txtResult.setText("");
+        } else {
+            toastMessage("DETECTA ALGO CARA");
+        }
     }
 
     public void pickGallery(View view) {
@@ -160,10 +227,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void AddData(String newEntry) {
-        boolean insertData = mDatabaseHelper.addData(newEntry);
-
-        if (insertData) {
+        int insertData = mDatabaseHelper.addData(newEntry);
+        if (insertData != -1) {
             toastMessage("Your text has been saved!");
+            Intent editScreenIntent = new Intent(MainActivity.this, EditDataActivity.class);
+            editScreenIntent.putExtra("id",insertData);
+            editScreenIntent.putExtra("name",newEntry);
+            startActivity(editScreenIntent);
         } else {
             toastMessage("Something went wrong");
         }
@@ -226,11 +296,15 @@ public class MainActivity extends AppCompatActivity {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                imageView.setImageBitmap(adjustedBitmap);
+                //imageView.setImageBitmap(adjustedBitmap);
+                //todo: remover isso também
+                detectText(btnProcess);
+
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 Exception error = result.getError();
             }
         }
+        //todo: que porra é esse 29, apagar
         if (requestCode == 29) {
             if (data != null) {
                 Bundle bundle = data.getExtras();

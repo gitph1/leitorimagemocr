@@ -8,10 +8,10 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
+        android:icon="@mipmap/launcher_v3"
+        android:label="SemIdeia"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/MyMaterialTheme">
         <activity android:name=".MainActivity"
             android:configChanges="orientation|keyboardHidden|screenSize">
 
@@ -26,9 +26,10 @@
             android:theme="@style/Base.Theme.AppCompat"/> <!-- optional (needed if default theme has no action bar) -->
         <meta-data
             android:name="com.google.android.gms.vision.DEPENDENCIES"
-            android:value="orc"/>
+            android:value="ocr"/>
         <activity android:name=".ListDataActivity"></activity>
-        <activity android:name=".EditDataActivity"></activity>
+        <activity android:name=".EditDataActivity"
+            android:windowSoftInputMode="stateHidden"></activity>
     </application>
 
 </manifest>

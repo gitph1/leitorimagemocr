@@ -4,44 +4,67 @@
     android:layout_height="fill_parent"
     android:fillViewport="true">
 
+
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingBottom="@dimen/activity_vertical_margin"
-        android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:paddingRight="@dimen/activity_horizontal_margin"
-        android:paddingTop="@dimen/activity_vertical_margin"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:weightSum="10"
         tools:context="dev.edmt.takepicturecamera.MainActivity">
+        <include
+            android:id="@+id/toolbar"
+            layout="@layout/toolbar"
+            />
 
         <ImageView
             android:id="@+id/image_view"
-            android:layout_weight="9"
             android:layout_width="match_parent"
             android:layout_height="fill_parent"
             android:adjustViewBounds="true"
+            android:visibility="gone"
             />
         <Button
             android:id="@+id/button_image"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent"
-            android:background="@android:color/holo_red_dark"
+            android:layout_marginTop="50dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:background="@drawable/circle"
+            android:drawableTop="@drawable/ic_action_camera"
+            android:paddingTop="20dp"
             android:textColor="@android:color/white"
             android:onClick="takePicture"
-            android:text="Take a picture!"/>
+            android:text="Take picture"/>
         <Button
             android:id="@+id/button_gallery"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent"
-            android:background="@android:color/holo_red_dark"
+
+            android:layout_gravity="center_horizontal"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:background="@drawable/circle"
+            android:drawableTop="@drawable/ic_action_gallery"
+            android:paddingTop="20dp"
             android:textColor="@android:color/white"
             android:layout_marginTop="10dp"
             android:onClick="pickGallery"
             android:text="Pick from gallery"/>
+
+        <Button
+            android:id="@+id/button_view"
+            android:layout_gravity="center_horizontal"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/circle"
+            android:drawableTop="@drawable/ic_action_text"
+            android:paddingTop="20dp"
+            android:text="Saved texts"
+            android:textColor="@android:color/white"/>
+            <!--android:background="@android:color/holo_red_dark"-->
+            <!--android:textColor="@android:color/white"-->
+            <!--android:layout_marginTop="10dp"-->
+            <!--android:text="View texts"-->
+            <!--/>-->
 
         <Button
             android:id="@+id/button_process"
@@ -50,19 +73,12 @@
             android:layout_width="match_parent"
             android:background="@android:color/holo_red_dark"
             android:textColor="@android:color/white"
+            android:onClick="detectText"
             android:layout_marginTop="10dp"
-            android:text="Detect text" />
+            android:text="Detect text"
+            android:visibility="invisible"/>
 
-        <Button
-            android:id="@+id/button_view"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent"
-            android:background="@android:color/holo_red_dark"
-            android:textColor="@android:color/white"
-            android:layout_marginTop="10dp"
-            android:text="View texts"
-            />
+
 
 
         <EditText
@@ -83,6 +99,7 @@
             android:background="@android:color/holo_red_dark"
             android:textColor="@android:color/white"
             android:layout_marginTop="10dp"
+            android:onClick="saveText"
             android:text="Save"
             android:visibility="invisible"
             />

@@ -13,10 +13,12 @@
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
-        android:text=""
+        android:gravity="right|fill_horizontal"
+        android:text="Teste testando testinho Teste testando testinho Teste testando testinho Teste testando testinho Teste testando testinho"
         android:textSize="24sp"
         android:layout_marginTop="78dp"
+        android:linksClickable="true"
+        android:autoLink="web|email"
         android:id="@+id/editable_item"/>
     <LinearLayout
         android:layout_centerHorizontal="true"

@@ -48,12 +48,14 @@ public class EditDataActivity extends AppCompatActivity {
         //set the text to show the current selected name
         editable_item.setText(selectedName);
 
+
         btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String item = editable_item.getText().toString();
                 if(!item.equals("")){
                     mDatabaseHelper.updateName(item,selectedID,selectedName);
+
                 }else{
                     toastMessage("You must enter a text");
                 }
