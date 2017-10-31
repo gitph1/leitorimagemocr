@@ -1,9 +1,10 @@
 <resources>
     <string name="app_name">LeitorImagem</string>
-    <string name="action_settings">Kekkings</string>
+    <string name="action_settings">Settings</string>
     <string name="action_search">Search</string>
+    <string name="action_texts">Texts</string>
     <string name="action_camera">Camera</string>
-    <string name="action_gallery">Camera</string>
+    <string name="action_gallery">Gallery</string>
     <string name="drawer_open">Open</string>
     <string name="drawer_close">Close</string>
 

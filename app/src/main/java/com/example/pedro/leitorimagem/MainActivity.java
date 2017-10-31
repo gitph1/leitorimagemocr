@@ -23,6 +23,7 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -51,7 +52,8 @@ import static com.example.pedro.leitorimagem.R.attr.height;
 public class MainActivity extends AppCompatActivity {
     DatabaseHelper mDatabaseHelper;
     ImageView imageView;
-    Button btnProcess, btnAdd, btnView, takePictureButton, btnGallery;
+    Button btnProcess, btnAdd;
+    ImageButton btnView, takePictureButton, btnGallery;
     EditText txtResult;
     Uri file;
     Bitmap bitmop;
@@ -66,12 +68,13 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
-        takePictureButton = (Button) findViewById(R.id.button_image);
-        btnGallery = (Button) findViewById(R.id.button_gallery);
+
+        takePictureButton = (ImageButton) findViewById(R.id.button_image);
+        btnGallery = (ImageButton) findViewById(R.id.button_gallery);
         imageView = (ImageView) findViewById(R.id.image_view);
         btnProcess = (Button) findViewById(R.id.button_process);
         btnAdd = (Button) findViewById(R.id.button_add);
-        btnView = (Button) findViewById(R.id.button_view);
+        btnView = (ImageButton) findViewById(R.id.button_view);
         txtResult = (EditText) findViewById(R.id.textview_result);
         mDatabaseHelper = new DatabaseHelper(this);
 
@@ -143,15 +146,17 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
+
         if (id == R.id.action_camera) {
             takePicture(takePictureButton);
         }
         if (id == R.id.action_gallery) {
             pickGallery(btnGallery);
         }
+        if (id == R.id.action_texts) {
+            viewTexts();
+        }
+
 
         return super.onOptionsItemSelected(item);
     }
@@ -171,6 +176,11 @@ public class MainActivity extends AppCompatActivity {
         intent.putExtra(MediaStore.EXTRA_OUTPUT, file);
         startActivityForResult(intent, 100);
 
+    }
+
+    public void viewTexts() {
+        Intent intent = new Intent(MainActivity.this, ListDataActivity.class);
+        startActivity(intent);
     }
 
     public void detectText(View view){

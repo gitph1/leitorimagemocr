@@ -4,6 +4,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.app.SearchManager;
 import android.widget.Button;
@@ -23,6 +27,10 @@ public class EditDataActivity extends AppCompatActivity {
 
     DatabaseHelper mDatabaseHelper;
 
+    private Toolbar mToolbar;
+
+    private android.support.v7.widget.ShareActionProvider mShareActionProvider;
+
     private String selectedName;
     private int selectedID;
 
@@ -35,6 +43,17 @@ public class EditDataActivity extends AppCompatActivity {
         btnSearch = (Button) findViewById(R.id.btnSearch);
         editable_item = (EditText) findViewById(R.id.editable_item);
         mDatabaseHelper = new DatabaseHelper(this);
+
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+
+
+        setSupportActionBar(mToolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+
+
+
 
         //get the intent extra from the ListDataActivity
         Intent receivedIntent = getIntent();
@@ -85,10 +104,41 @@ public class EditDataActivity extends AppCompatActivity {
             public void onClick(View view) {
                 mDatabaseHelper.deleteName(selectedID,selectedName);
                 editable_item.setText("");
+                onBackPressed();
                 toastMessage("removed from database");
             }
         });
 
+    }
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_edit, menu);
+        return true;
+    }
+
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+
+        if (id == R.id.action_share) {
+            Intent sendIntent = new Intent();
+            sendIntent.setAction(Intent.ACTION_SEND);
+            sendIntent.putExtra(Intent.EXTRA_TEXT, editable_item.getText().toString());
+            sendIntent.setType("text/plain");
+            startActivity(sendIntent);
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     /**

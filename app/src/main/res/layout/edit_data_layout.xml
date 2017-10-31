@@ -1,22 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/toolbar"
+        />
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:fillViewport="true">
+    android:fillViewport="true"
+    android:layout_below="@id/toolbar"
+    >
+
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
+
+
 
 
 
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
         android:gravity="right|fill_horizontal"
-        android:text="Teste testando testinho Teste testando testinho Teste testando testinho Teste testando testinho Teste testando testinho"
+        android:text="Nenhum texto detectado"
         android:textSize="24sp"
         android:layout_marginTop="78dp"
+        android:background="@drawable/edit_text_border"
         android:linksClickable="true"
         android:autoLink="web|email"
         android:id="@+id/editable_item"/>
@@ -28,29 +43,36 @@
         android:layout_below="@+id/editable_item"
         >
 
+
         <Button
+            android:layout_marginTop="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:text="DELETE"
+            android:drawableRight="@drawable/ic_action_delete"
+            android:text="Delete"
             android:id="@+id/btnDelete"/>
 
         <Button
             android:id="@+id/btnSave"
+            android:layout_marginTop="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:drawableRight="@drawable/ic_action_save"
             android:layout_toRightOf="@+id/btnDelete"
-            android:text="SAVE" />
+            android:text="Save" />
+
         <Button
             android:id="@+id/btnSearch"
+            android:layout_marginTop="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:drawableRight="@android:drawable/ic_menu_search"
             android:layout_toRightOf="@+id/btnSave"
-            android:text="SEARCH" />
+            android:text="Google it" />
 
     </LinearLayout>
 
+
 </RelativeLayout>
-    </ScrollView>
+</ScrollView>
+</RelativeLayout>
