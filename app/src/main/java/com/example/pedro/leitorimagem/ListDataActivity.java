@@ -1,7 +1,6 @@
 package com.example.pedro.leitorimagem;
 
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -18,10 +17,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.vision.Frame;
@@ -81,25 +78,23 @@ public class ListDataActivity extends AppCompatActivity {
         Log.d(TAG, "populateListView: Displaying data in the ListView.");
 
         //get the data and append to a list
-        Cursor data = mDatabaseHelper.getData();
+        Cursor data = mDatabaseHelper.getTextContent();
         ArrayList<String> listData = new ArrayList<>();
         while(data.moveToNext()){
             //get the value from the database in column 1
             //then add it to the ArrayList
             listData.add(data.getString(1));
         }
-        //create the list adapter and set the adapter
         ListAdapter adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, listData);
         mListView.setAdapter(adapter);
 
-        //set an onItemClickListener to the ListView
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 String name = adapterView.getItemAtPosition(i).toString();
                 Log.d(TAG, "onItemClick: You Clicked on " + name);
 
-                Cursor data = mDatabaseHelper.getItemID(name); //get the id associated with that name
+                Cursor data = mDatabaseHelper.getTextID(name); //get the id associated with that name
                 int itemID = -1;
                 while(data.moveToNext()){
                     itemID = data.getInt(0);
@@ -118,10 +113,7 @@ public class ListDataActivity extends AppCompatActivity {
         });
     }
 
-    /**
-     * customizable toast
-     * @param message
-     */
+
     public boolean onSupportNavigateUp() {
         onBackPressed();
         return true;
@@ -129,7 +121,6 @@ public class ListDataActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         MenuItem itemTexts = menu.findItem(R.id.action_texts);
         itemTexts.setVisible(false);
@@ -139,12 +130,9 @@ public class ListDataActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
+
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
 
         if (id == R.id.action_camera) {
             takePicture();
@@ -198,7 +186,7 @@ public class ListDataActivity extends AppCompatActivity {
         if (txtResult.length() != 0) {
             AddData(txtResult);
         } else {
-            toastMessage("DETECTA ALGO CARA");
+            toastMessage("No characters were detected");
         }
     }
 
@@ -225,7 +213,7 @@ public class ListDataActivity extends AppCompatActivity {
     }
 
     public void AddData(String newEntry) {
-        int insertData = mDatabaseHelper.addData(newEntry);
+        int insertData = mDatabaseHelper.addText(newEntry);
         if (insertData != -1) {
             toastMessage("Your text has been saved!");
             Intent editScreenIntent = new Intent(ListDataActivity.this, EditDataActivity.class);

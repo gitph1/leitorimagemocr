@@ -85,50 +85,6 @@
             android:clickable="true"
             android:onClick="takePicture"
             android:scaleType="fitCenter" />
-        <Button
-            android:id="@+id/button_process"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent"
-            android:background="@android:color/holo_red_dark"
-            android:textColor="@android:color/white"
-            android:onClick="detectText"
-            android:layout_marginTop="10dp"
-            android:text="Detect text"
-            android:visibility="gone"/>
-
-
-        <EditText
-            android:id="@+id/textview_result"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/button_process"
-            android:gravity="center_horizontal"
-            android:text=""
-            android:textSize="24sp"
-            android:visibility="invisible" />
-
-        <Button
-            android:id="@+id/button_add"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent"
-            android:background="@android:color/holo_red_dark"
-            android:textColor="@android:color/white"
-            android:layout_marginTop="10dp"
-            android:onClick="saveText"
-            android:text="Save"
-            android:visibility="gone"
-            />
-        <ImageView
-            android:id="@+id/image_view"
-            android:layout_width="match_parent"
-            android:layout_height="fill_parent"
-            android:adjustViewBounds="true"
-            android:visibility="gone"
-            />
-
-
 
     </RelativeLayout>
 

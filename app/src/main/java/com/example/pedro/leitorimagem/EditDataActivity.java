@@ -31,7 +31,7 @@ public class EditDataActivity extends AppCompatActivity {
 
     private android.support.v7.widget.ShareActionProvider mShareActionProvider;
 
-    private String selectedName;
+    private String selectedText;
     private int selectedID;
 
     @Override
@@ -58,14 +58,14 @@ public class EditDataActivity extends AppCompatActivity {
         //get the intent extra from the ListDataActivity
         Intent receivedIntent = getIntent();
 
-        //now get the itemID we passed as an extra
+
         selectedID = receivedIntent.getIntExtra("id",-1); //NOTE: -1 is just the default value
 
-        //now get the name we passed as an extra
-        selectedName = receivedIntent.getStringExtra("name");
 
-        //set the text to show the current selected name
-        editable_item.setText(selectedName);
+        selectedText = receivedIntent.getStringExtra("name");
+
+        //set the text
+        editable_item.setText(selectedText);
 
 
         btnSave.setOnClickListener(new View.OnClickListener() {
@@ -73,8 +73,8 @@ public class EditDataActivity extends AppCompatActivity {
             public void onClick(View view) {
                 String item = editable_item.getText().toString();
                 if(!item.equals("")){
-                    mDatabaseHelper.updateName(item,selectedID,selectedName);
-
+                    mDatabaseHelper.updateText(item,selectedID, selectedText);
+                    toastMessage("Text updated");
                 }else{
                     toastMessage("You must enter a text");
                 }
@@ -102,7 +102,7 @@ public class EditDataActivity extends AppCompatActivity {
         btnDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mDatabaseHelper.deleteName(selectedID,selectedName);
+                mDatabaseHelper.deleteText(selectedID, selectedText);
                 editable_item.setText("");
                 onBackPressed();
                 toastMessage("removed from database");
@@ -111,7 +111,7 @@ public class EditDataActivity extends AppCompatActivity {
 
     }
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
+        // add items to the action bar
         getMenuInflater().inflate(R.menu.menu_edit, menu);
         return true;
     }
@@ -123,12 +123,8 @@ public class EditDataActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
+        int id = item.getItemId();
 
         if (id == R.id.action_share) {
             Intent sendIntent = new Intent();

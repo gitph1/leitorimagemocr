@@ -2,13 +2,9 @@ package com.example.pedro.leitorimagem;
 
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
-import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -21,11 +17,7 @@ import android.util.Log;
 import android.util.SparseArray;
 import android.view.Menu;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 import android.view.MenuItem;
 
@@ -37,24 +29,14 @@ import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import static android.R.attr.bitmap;
-import static android.R.attr.rotation;
-import static android.R.attr.width;
-import static com.example.pedro.leitorimagem.R.attr.height;
-
 public class MainActivity extends AppCompatActivity {
     DatabaseHelper mDatabaseHelper;
-    ImageView imageView;
-    Button btnProcess, btnAdd;
     ImageButton btnView, takePictureButton, btnGallery;
-    EditText txtResult;
+    String newEntry;
     Uri file;
     Bitmap bitmop;
     Bitmap adjustedBitmap;
@@ -71,11 +53,7 @@ public class MainActivity extends AppCompatActivity {
 
         takePictureButton = (ImageButton) findViewById(R.id.button_image);
         btnGallery = (ImageButton) findViewById(R.id.button_gallery);
-        imageView = (ImageView) findViewById(R.id.image_view);
-        btnProcess = (Button) findViewById(R.id.button_process);
-        btnAdd = (Button) findViewById(R.id.button_add);
         btnView = (ImageButton) findViewById(R.id.button_view);
-        txtResult = (EditText) findViewById(R.id.textview_result);
         mDatabaseHelper = new DatabaseHelper(this);
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
@@ -83,44 +61,6 @@ public class MainActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
         }
 
-
-        btnProcess.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                TextRecognizer textRecognizer = new TextRecognizer.Builder(getApplicationContext()).build();
-                if (!textRecognizer.isOperational()) {
-                    Log.w("Error", "Detector dependencies are not yet available");
-
-                } else {
-                    Frame frame = new Frame.Builder().setBitmap(adjustedBitmap).build();
-                    SparseArray<TextBlock> items = textRecognizer.detect(frame);
-                    StringBuilder stringBuilder = new StringBuilder();
-                    for (int i = 0; i < items.size(); i++) {
-                        TextBlock item = items.valueAt(i);
-                        stringBuilder.append(item.getValue());
-                        stringBuilder.append("\n");
-                    }
-//                    txtResult.setText(stringBuilder.toString(), TextView.BufferType.EDITABLE);
-//                    txtResult.setVisibility(View.VISIBLE);
-//                    btnAdd.setVisibility(View.VISIBLE);
-                }
-            }
-        });
-
-//        btnAdd.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                String newEntry = txtResult.getText().toString();
-//                if (txtResult.length() != 0) {
-//                    AddData(newEntry);
-//                    txtResult.setText("");
-//                } else {
-//                    toastMessage("DETECTA ALGO CARA");
-//                }
-//
-//            }
-//        });
-        //todo: apagar esses onclick  e deixar tudo direto
 
         btnView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -140,12 +80,10 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
+        // "onClick" da action bar
+
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
 
         if (id == R.id.action_camera) {
             takePicture(takePictureButton);
@@ -169,7 +107,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-    //todo: remover View view dos métodos
+
     public void takePicture(View view) {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         file = Uri.fromFile(getOutputMediaFile());
@@ -183,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    public void detectText(View view){
+    public void detectText(){
         TextRecognizer textRecognizer = new TextRecognizer.Builder(getApplicationContext()).build();
         if (!textRecognizer.isOperational()) {
             Log.w("Error", "Detector dependencies are not yet available");
@@ -197,20 +135,17 @@ public class MainActivity extends AppCompatActivity {
                 stringBuilder.append(item.getValue());
                 stringBuilder.append("\n");
             }
-                    txtResult.setText(stringBuilder.toString(), TextView.BufferType.EDITABLE);
-                    saveText(btnAdd);
-//                    txtResult.setVisibility(View.VISIBLE);
-//                    btnAdd.setVisibility(View.VISIBLE);
+                   newEntry = stringBuilder.toString();
+                    saveText();
+
         }
     }
 
-    public void saveText(View view){
-        String newEntry = txtResult.getText().toString();
-        if (txtResult.length() != 0) {
-            AddData(newEntry);
-            txtResult.setText("");
+    public void saveText(){
+        if (newEntry.length() != 0) {
+            AddNewText(newEntry);
         } else {
-            toastMessage("DETECTA ALGO CARA");
+            toastMessage("No characters were detected");
         }
     }
 
@@ -236,8 +171,8 @@ public class MainActivity extends AppCompatActivity {
                 "IMG_" + timeStamp + ".jpg");
     }
 
-    public void AddData(String newEntry) {
-        int insertData = mDatabaseHelper.addData(newEntry);
+    public void AddNewText(String newEntry) {
+        int insertData = mDatabaseHelper.addText(newEntry);
         if (insertData != -1) {
             toastMessage("Your text has been saved!");
             Intent editScreenIntent = new Intent(MainActivity.this, EditDataActivity.class);
@@ -249,10 +184,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * customizable toast
-     * @param message
-     */
+
     private void toastMessage(String message){
         Toast.makeText(this,message, Toast.LENGTH_SHORT).show();
     }
@@ -306,24 +238,13 @@ public class MainActivity extends AppCompatActivity {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                //imageView.setImageBitmap(adjustedBitmap);
-                //todo: remover isso também
-                detectText(btnProcess);
+                detectText();
 
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 Exception error = result.getError();
             }
         }
-        //todo: que porra é esse 29, apagar
-        if (requestCode == 29) {
-            if (data != null) {
-                Bundle bundle = data.getExtras();
-                if (bundle != null) {
-                    adjustedBitmap = (Bitmap) bundle.get("data");
-                    imageView.setImageBitmap(adjustedBitmap);
-                }
-            }
-        }
+
     }
 
 
