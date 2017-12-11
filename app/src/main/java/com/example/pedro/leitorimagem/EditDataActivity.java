@@ -62,7 +62,7 @@ public class EditDataActivity extends AppCompatActivity {
         selectedID = receivedIntent.getIntExtra("id",-1); //NOTE: -1 is just the default value
 
 
-        selectedText = receivedIntent.getStringExtra("name");
+        selectedText = receivedIntent.getStringExtra("text");
 
         //set the text
         editable_item.setText(selectedText);

@@ -75,14 +75,10 @@ public class ListDataActivity extends AppCompatActivity {
     }
 
     private void populateListView() {
-        Log.d(TAG, "populateListView: Displaying data in the ListView.");
 
-        //get the data and append to a list
         Cursor data = mDatabaseHelper.getTextContent();
         ArrayList<String> listData = new ArrayList<>();
         while(data.moveToNext()){
-            //get the value from the database in column 1
-            //then add it to the ArrayList
             listData.add(data.getString(1));
         }
         ListAdapter adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, listData);
@@ -91,10 +87,9 @@ public class ListDataActivity extends AppCompatActivity {
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                String name = adapterView.getItemAtPosition(i).toString();
-                Log.d(TAG, "onItemClick: You Clicked on " + name);
+                String text = adapterView.getItemAtPosition(i).toString();
 
-                Cursor data = mDatabaseHelper.getTextID(name); //get the id associated with that name
+                Cursor data = mDatabaseHelper.getTextID(text);
                 int itemID = -1;
                 while(data.moveToNext()){
                     itemID = data.getInt(0);
@@ -103,11 +98,11 @@ public class ListDataActivity extends AppCompatActivity {
                     Log.d(TAG, "onItemClick: The ID is: " + itemID);
                     Intent editScreenIntent = new Intent(ListDataActivity.this, EditDataActivity.class);
                     editScreenIntent.putExtra("id",itemID);
-                    editScreenIntent.putExtra("name",name);
+                    editScreenIntent.putExtra("text",text);
                     startActivity(editScreenIntent);
                 }
                 else{
-                    toastMessage("No ID associated with that name");
+                    toastMessage("No ID associated with that text");
                 }
             }
         });
@@ -218,7 +213,7 @@ public class ListDataActivity extends AppCompatActivity {
             toastMessage("Your text has been saved!");
             Intent editScreenIntent = new Intent(ListDataActivity.this, EditDataActivity.class);
             editScreenIntent.putExtra("id",insertData);
-            editScreenIntent.putExtra("name",newEntry);
+            editScreenIntent.putExtra("text",newEntry);
             startActivity(editScreenIntent);
         } else {
             toastMessage("Something went wrong");
